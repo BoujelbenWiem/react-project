@@ -1,0 +1,49 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+.loader {
+  width: 100%;
+  min-height: 250px; // same as product grid height
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    #6366f1,
+    #0ea5e9,
+    #06b6d4,
+    #6366f1
+  );
+  animation: spin 1s linear infinite;
+  position: relative;
+}
+
+.spinner::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  background: #ffffff;
+  border-radius: 50%;
+}
+
+/* Animations */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyStore - Guide API & Exercice React.js</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #dbeafe;
+      --success: #16a34a;
+      --success-light: #dcfce7;
+      --warning: #d97706;
+      --warning-light: #fef3c7;
+      --danger: #dc2626;
+      --danger-light: #fee2e2;
+      --info: #0891b2;
+      --info-light: #cffafe;
+      --purple: #7c3aed;
+      --purple-light: #ede9fe;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--gray-800);
+      line-height: 1.6;
+      background: var(--gray-50);
+    }
+
+    @media print {
+      body { background: white; font-size: 11px; line-height: 1.4; }
+      .no-print { display: none !important; }
+      .page-break { page-break-before: always; }
+      section { page-break-inside: avoid; }
+      .api-card { page-break-inside: avoid; }
+      pre { font-size: 9px; }
+      h1 { font-size: 22px; }
+      h2 { font-size: 16px; }
+      h3 { font-size: 13px; }
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* HEADER COVER */
+    .cover {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+      color: white;
+      padding: 60px 0;
+      text-align: center;
+    }
+    .cover h1 { font-size: 42px; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
+    .cover .subtitle { font-size: 20px; font-weight: 300; opacity: 0.9; margin-bottom: 24px; }
+    .cover .meta { display: flex; justify-content: center; gap: 32px; font-size: 14px; opacity: 0.8; }
+    .cover .meta span { display: flex; align-items: center; gap: 6px; }
+
+    /* PRINT BUTTON */
+    .print-bar {
+      background: var(--warning-light);
+      border-bottom: 2px solid var(--warning);
+      padding: 12px 0;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .print-bar button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .print-bar button:hover { background: var(--primary-dark); }
+
+    /* TABLE OF CONTENTS */
+    .toc {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 32px;
+      margin: 32px 0;
+    }
+    .toc h2 { font-size: 20px; margin-bottom: 16px; color: var(--primary); }
+    .toc ol { padding-left: 20px; }
+    .toc li { padding: 4px 0; }
+    .toc a { color: var(--primary); text-decoration: none; font-weight: 500; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* SECTIONS */
+    section { margin: 40px 0; }
+    section h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--gray-900);
+      padding-bottom: 12px;
+      border-bottom: 3px solid var(--primary);
+      margin-bottom: 24px;
+    }
+    section h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin: 24px 0 12px;
+    }
+    section p { margin-bottom: 12px; color: var(--gray-600); }
+
+    /* API CARDS */
+    .api-card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .api-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .method-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      min-width: 60px;
+      text-align: center;
+    }
+    .method-get { background: var(--success-light); color: var(--success); }
+    .method-post { background: var(--primary-light); color: var(--primary); }
+    .method-put { background: var(--warning-light); color: var(--warning); }
+    .method-delete { background: var(--danger-light); color: var(--danger); }
+    .api-card-header .url {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-800);
+    }
+    .api-card-header .desc {
+      margin-left: auto;
+      font-size: 13px;
+      color: var(--gray-500);
+      font-weight: 500;
+    }
+    .api-card-body { padding: 20px; }
+    .api-card-body p { font-size: 14px; }
+
+    /* CODE BLOCKS */
+    pre {
+      background: var(--gray-900);
+      color: #e5e7eb;
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      overflow-x: auto;
+      margin: 12px 0;
+      line-height: 1.5;
+    }
+    code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      background: var(--gray-100);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--danger);
+    }
+    pre code { background: none; padding: 0; color: inherit; }
+
+    .comment { color: #6b7280; }
+    .string { color: #34d399; }
+    .keyword { color: #818cf8; }
+    .number { color: #fbbf24; }
+    .func { color: #60a5fa; }
+
+    /* TABLES */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    th {
+      background: var(--gray-100);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid var(--gray-300);
+      font-size: 13px;
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    tr:hover { background: var(--gray-50); }
+
+    /* PAGE MAPPING */
+    .page-map {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .page-map-card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .page-map-card h4 {
+      font-size: 16px;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .page-map-card .file {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+    }
+    .page-map-card ul {
+      padding-left: 18px;
+      font-size: 13px;
+      color: var(--gray-600);
+    }
+    .page-map-card li { padding: 2px 0; }
+    .api-tag {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--success-light);
+      color: var(--success);
+      margin-right: 4px;
+    }
+    .api-tag-post {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .api-tag-put {
+      background: var(--warning-light);
+      color: var(--warning);
+    }
+    .api-tag-delete {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    /* FLOW DIAGRAM */
+    .flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .flow-step {
+      background: white;
+      border: 2px solid var(--primary);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      min-width: 120px;
+    }
+    .flow-step-success { border-color: var(--success); }
+    .flow-step-warning { border-color: var(--warning); }
+    .flow-step-danger { border-color: var(--danger); }
+    .flow-step-purple { border-color: var(--purple); background: var(--purple-light); }
+    .flow-arrow { font-size: 24px; color: var(--primary); }
+    .flow-arrow-down { display: block; text-align: center; font-size: 24px; color: var(--primary); margin: 8px 0; }
+
+    /* TIPS */
+    .tip {
+      background: var(--info-light);
+      border-left: 4px solid var(--info);
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    .tip strong { color: var(--info); }
+
+    .warning {
+      background: var(--warning-light);
+      border-left: 4px solid var(--warning);
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    .warning strong { color: var(--warning); }
+
+    .danger-box {
+      background: var(--danger-light);
+      border-left: 4px solid var(--danger);
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    .danger-box strong { color: var(--danger); }
+
+    /* CHECKLIST */
+    .checklist {
+      list-style: none;
+      padding: 0;
+    }
+    .checklist li {
+      padding: 8px 0;
+      padding-left: 28px;
+      position: relative;
+      font-size: 14px;
+    }
+    .checklist li::before {
+      content: "☐";
+      position: absolute;
+      left: 0;
+      font-size: 16px;
+    }
+
+    /* CSS OPTIONS */
+    .css-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .css-option {
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+    .css-option h4 { font-size: 16px; margin-bottom: 8px; }
+    .css-option p { font-size: 13px; color: var(--gray-500); margin-bottom: 12px; }
+    .css-option code { font-size: 11px; }
+    .css-option.recommended { border-color: var(--primary); }
+    .css-option .badge {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    /* LIFECYCLE VERTICAL */
+    .lifecycle {
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    .lifecycle-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 4px;
+    }
+    .lifecycle-num {
+      min-width: 36px;
+      height: 36px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .lifecycle-num.green { background: var(--success); }
+    .lifecycle-num.orange { background: var(--warning); }
+    .lifecycle-num.red { background: var(--danger); }
+    .lifecycle-content {
+      flex: 1;
+      padding: 8px 0;
+    }
+    .lifecycle-content strong { display: block; font-size: 14px; margin-bottom: 2px; }
+    .lifecycle-content span { font-size: 13px; color: var(--gray-500); }
+    .lifecycle-line {
+      width: 2px;
+      height: 20px;
+      background: var(--gray-300);
+      margin-left: 17px;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--gray-900);
+      color: var(--gray-300);
+      text-align: center;
+      padding: 24px 0;
+      margin-top: 60px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="container">
+    <h1>MyStore API Guide</h1>
+    <p class="subtitle">Guide de reference API & Exercice React.js</p>
+    <div class="meta">
+      <span>json-server sur localhost:3001</span>
+      <span>244 produits &bull; 5 categories &bull; 19 endpoints</span>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT BAR -->
+<div class="print-bar no-print">
+  <button onclick="window.print()">Imprimer / Enregistrer en PDF</button>
+</div>
+
+<div class="container">
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <h2>Sommaire</h2>
+  <ol>
+    <li><a href="#section-architecture">Ce qui vous est fourni</a></li>
+    <li><a href="#section-demarrage">Demarrage rapide</a></li>
+    <li><a href="#section-css">Integration CSS : 3 approches possibles</a></li>
+    <li><a href="#section-product-structure">Structure d'un produit</a></li>
+    <li><a href="#section-mapping">Mapping API &harr; Pages maquettes</a></li>
+    <li><a href="#section-api-categories">API Categories</a></li>
+    <li><a href="#section-api-products">API Products (CRUD + Recherche)</a></li>
+    <li><a href="#section-api-slides">API Slides (Carousel)</a></li>
+    <li><a href="#section-api-cart">API Cart (Panier) - Cycle de vie complet</a></li>
+    <li><a href="#section-api-orders">API Orders (Commandes)</a></li>
+    <li><a href="#section-search">Recherche full-text en detail</a></li>
+    <li><a href="#section-pagination">Pagination & Tri</a></li>
+    <li><a href="#section-travail">Travail a realiser</a></li>
+  </ol>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 1 - ARCHITECTURE -->
+<!-- ============================================ -->
+<section id="section-architecture">
+  <h2>1. Ce qui vous est fourni</h2>
+
+  <h3>Dossier API (Mock Server)</h3>
+  <pre><code>api/
+├── db.json              <span class="comment"># API complete (244 produits, 5 categories, slides, carts, orders)</span>
+├── package.json         <span class="comment"># npm install + npm start (pas besoin d'install globale)</span>
+├── API-GUIDE.html       <span class="comment"># Ce document de reference</span>
+└── test-api.js          <span class="comment"># Script pour verifier que tout marche (19 tests)</span></code></pre>
+
+  <h3>Dossier Maquettes (Pages statiques + Assets)</h3>
+  <pre><code>MaquetteExo/VueJS-Exo/
+├── Maquette-mini-site-exo-vueJS/       <span class="comment"># Pages HTML statiques</span>
+│   ├── index.html                       <span class="comment"># Page d'accueil (carousel, top sellers, top new)</span>
+│   ├── shop.html                        <span class="comment"># Page liste produits (grille + pagination)</span>
+│   ├── product.html                     <span class="comment"># Page detail produit</span>
+│   ├── cart.html                        <span class="comment"># Page panier</span>
+│   ├── checkout.html                    <span class="comment"># Page commande (formulaire billing/shipping)</span>
+│   ├── css/                             <span class="comment"># bootstrap.min.css, font-awesome.min.css, style.css, responsive.css</span>
+│   ├── img/                             <span class="comment"># Images du site (logo, slides, thumbnails)</span>
+│   ├── fonts/                           <span class="comment"># FontAwesome + Glyphicons</span>
+│   └── js/                              <span class="comment"># bootstrap.min.js</span>
+└── produts-img/                         <span class="comment"># Images des produits par marque</span>
+    ├── Apple/                           <span class="comment"># 38 images</span>
+    ├── Samsung/                         <span class="comment"># 84 images</span>
+    ├── LG/                              <span class="comment"># 53 images</span>
+    ├── Huawei/                          <span class="comment"># 39 images</span>
+    └── Sony/                            <span class="comment"># 30 images</span></code></pre>
+
+  <div class="tip">
+    <strong>Les maquettes HTML</strong> sont votre reference visuelle. Ouvrez-les dans le navigateur pour voir le rendu attendu de chaque page. Votre objectif est de reproduire ces pages en React.js en remplacant les donnees statiques par des appels API.
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 2 - DEMARRAGE -->
+<!-- ============================================ -->
+<section id="section-demarrage" class="page-break">
+  <h2>2. Demarrage rapide</h2>
+
+  <h3>Etape 1 : Installer et lancer l'API</h3>
+  <pre><code><span class="comment"># Dans le dossier api/</span>
+npm install                 <span class="comment"># Installe json-server localement</span>
+npm start                   <span class="comment"># Demarre le serveur sur http://localhost:3001</span></code></pre>
+
+  <div class="warning">
+    <strong>Pas besoin de <code>npm install -g json-server</code> !</strong> Le package.json inclut deja json-server en dependance locale. Un simple <code>npm install</code> + <code>npm start</code> suffit.
+  </div>
+
+  <h3>Etape 2 : Creer le projet React</h3>
+  <pre><code><span class="comment"># Dans un autre dossier (a cote du dossier api/)</span>
+npm create vite@latest mystore-app -- --template react
+cd mystore-app
+npm install
+npm run dev                 <span class="comment"># Demarre le projet React sur http://localhost:5173</span></code></pre>
+
+  <h3>Etape 3 : Tester l'API dans le navigateur</h3>
+  <pre><code><span class="comment"># Ouvrez ces URLs dans votre navigateur pour verifier que l'API repond :</span>
+http://localhost:3001/categories
+http://localhost:3001/products?q=iphone
+http://localhost:3001/products?categoryId=100&_page=1&_limit=12
+http://localhost:3001/slides
+
+<span class="comment"># Ou lancez la suite de tests automatique :</span>
+node test-api.js            <span class="comment"># Doit afficher 19/19 OK</span></code></pre>
+
+  <div class="flow">
+    <div class="flow-step">React App<br><small>:5173</small></div>
+    <div class="flow-arrow">&rarr; fetch() &rarr;</div>
+    <div class="flow-step">json-server<br><small>:3001</small></div>
+    <div class="flow-arrow">&rarr; lit &rarr;</div>
+    <div class="flow-step">db.json<br><small>244 produits</small></div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 3 - CSS -->
+<!-- ============================================ -->
+<section id="section-css">
+  <h2>3. Integration CSS : 3 approches possibles</h2>
+  <p>Pour le style de votre application, vous avez le choix entre 3 approches. A vous de choisir celle qui vous convient le mieux :</p>
+
+  <div class="css-options">
+    <div class="css-option">
+      <h4>Option A<br>Maquette statique</h4>
+      <p>Reutilisez directement les fichiers CSS fournis dans les maquettes (bootstrap.min.css, style.css, responsive.css) et les classes HTML existantes.</p>
+      <pre><code>Copiez css/ et fonts/
+dans votre dossier
+public/ ou src/assets/</code></pre>
+      <p style="margin-top:8px;"><strong>Pour :</strong> Rapide, rendu identique aux maquettes<br><strong>Contre :</strong> CSS legacy, pas modulaire</p>
+    </div>
+
+    <div class="css-option recommended">
+      <span class="badge">Moderne</span>
+      <h4>Option B<br>SCSS / Sass</h4>
+      <p>Reecrivez le CSS en SCSS avec des variables, des mixins et une architecture par composant. Inspirez-vous des maquettes pour le design.</p>
+      <pre><code>npm install -D sass
+<span class="comment">// Creez vos fichiers</span>
+src/styles/
+├── _variables.scss
+├── _mixins.scss
+├── components/
+└── main.scss</code></pre>
+      <p style="margin-top:8px;"><strong>Pour :</strong> Maintenable, reutilisable<br><strong>Contre :</strong> Plus de temps</p>
+    </div>
+
+    <div class="css-option">
+      <span class="badge" style="background:var(--info);">Utility-first</span>
+      <h4>Option C<br>Tailwind CSS</h4>
+      <p>Utilisez Tailwind CSS pour styler directement dans le JSX avec des classes utilitaires. Inspirez-vous des maquettes pour le design.</p>
+      <pre><code>npm install -D tailwindcss
+  @tailwindcss/vite
+npx tailwindcss init</code></pre>
+      <p style="margin-top:8px;"><strong>Pour :</strong> Rapide, pas de fichiers CSS<br><strong>Contre :</strong> Classes longues dans le JSX</p>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>Conseil :</strong> Quelle que soit l'approche choisie, ouvrez les maquettes HTML dans votre navigateur pour voir le rendu attendu. Les maquettes sont votre <strong>reference visuelle</strong>, pas votre source de code.
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 4 - STRUCTURE PRODUIT -->
+<!-- ============================================ -->
+<section id="section-product-structure" class="page-break">
+  <h2>4. Structure d'un produit</h2>
+  <p>Chaque produit retourne par l'API contient les champs suivants :</p>
+
+  <pre><code>{
+  <span class="string">"id"</span>: <span class="number">1015</span>,                           <span class="comment">// Identifiant unique</span>
+  <span class="string">"name"</span>: <span class="string">"apple iphone 11 pro max"</span>,    <span class="comment">// Nom du produit</span>
+  <span class="string">"imageName"</span>: <span class="string">"apple-iphone-11-pro-max-.jpg"</span>,  <span class="comment">// Nom du fichier image</span>
+  <span class="string">"price"</span>: <span class="number">308</span>,                          <span class="comment">// Prix en euros</span>
+  <span class="string">"discountRate"</span>: <span class="number">22</span>,                    <span class="comment">// Remise en %</span>
+  <span class="string">"review"</span>: <span class="number">4</span>,                           <span class="comment">// Note de 1 a 5 (etoiles)</span>
+  <span class="string">"categoryId"</span>: <span class="string">"100"</span>,                   <span class="comment">// ID de la categorie parente</span>
+  <span class="string">"categoryName"</span>: <span class="string">"Apple"</span>,               <span class="comment">// Libelle de la categorie parente</span>
+  <span class="string">"type"</span>: <span class="string">"phone"</span>,                       <span class="comment">// phone | tablet | watch</span>
+  <span class="string">"description"</span>: <span class="string">"Smartphone Apple..."</span>,   <span class="comment">// Description du produit</span>
+  <span class="string">"inStock"</span>: <span class="keyword">true</span>,                       <span class="comment">// Disponibilite</span>
+  <span class="string">"isTopSeller"</span>: <span class="keyword">false</span>,                  <span class="comment">// Afficher dans "Top Sellers"</span>
+  <span class="string">"isNewProduct"</span>: <span class="keyword">false</span>                  <span class="comment">// Afficher dans "Top New"</span>
+}</code></pre>
+
+  <div class="tip">
+    <strong>categoryId + categoryName :</strong> Ces deux champs sont presents sur chaque produit pour vous permettre de construire facilement un fil d'Ariane (breadcrumb) et de naviguer entre les categories sans appel API supplementaire.
+  </div>
+
+  <h3>Calcul du prix apres remise</h3>
+  <pre><code>Prix original :   308 &euro;
+Remise (22%) :    308 &times; 22 / 100 = 67.76 &euro;
+Prix final :      308 - 67.76 = <span class="number">240.24 &euro;</span></code></pre>
+
+  <h3>Chemin des images</h3>
+  <p>Les images des produits sont organisees par marque dans <code>produts-img/{Brand}/</code>. Copiez-les dans votre projet React :</p>
+  <pre><code><span class="comment">// Copiez produts-img/ dans public/images/products/</span>
+<span class="comment">// Puis referencez-les comme ceci :</span>
+
+/images/products/{categoryName}/{imageName}
+
+<span class="comment">// Exemple : /images/products/Apple/apple-iphone-11-pro-max-.jpg</span></code></pre>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 5 - MAPPING API / PAGES -->
+<!-- ============================================ -->
+<section id="section-mapping" class="page-break">
+  <h2>5. Mapping API &harr; Pages maquettes</h2>
+  <p>Voici quel endpoint utiliser pour alimenter chaque page :</p>
+
+  <div class="page-map">
+    <div class="page-map-card">
+      <h4>Page Accueil</h4>
+      <div class="file">Maquette : index.html</div>
+      <ul>
+        <li><span class="api-tag">GET</span> <code>/categories</code> &rarr; Menu navigation</li>
+        <li><span class="api-tag">GET</span> <code>/slides</code> &rarr; Carousel / Slider</li>
+        <li><span class="api-tag">GET</span> <code>/products?isTopSeller=true</code> &rarr; Section "Top Sellers"</li>
+        <li><span class="api-tag">GET</span> <code>/products?isNewProduct=true</code> &rarr; Section "Top New"</li>
+      </ul>
+    </div>
+
+    <div class="page-map-card">
+      <h4>Page Shop (liste produits)</h4>
+      <div class="file">Maquette : shop.html</div>
+      <ul>
+        <li><span class="api-tag">GET</span> <code>/products?categoryId=xxx</code> &rarr; Grille produits</li>
+        <li><span class="api-tag">GET</span> <code>...&_page=1&_limit=12</code> &rarr; Pagination</li>
+        <li><span class="api-tag">GET</span> <code>...&_sort=price&_order=asc</code> &rarr; Tri</li>
+      </ul>
+    </div>
+
+    <div class="page-map-card">
+      <h4>Page Detail Produit</h4>
+      <div class="file">Maquette : product.html</div>
+      <ul>
+        <li><span class="api-tag">GET</span> <code>/products/:id</code> &rarr; Toutes les infos du produit</li>
+        <li>Champs <code>categoryId</code> + <code>categoryName</code> &rarr; Fil d'Ariane</li>
+      </ul>
+    </div>
+
+    <div class="page-map-card">
+      <h4>Page Panier</h4>
+      <div class="file">Maquette : cart.html</div>
+      <ul>
+        <li><span class="api-tag">GET</span> <code>/carts/:id</code> &rarr; Contenu du panier</li>
+        <li><span class="api-tag api-tag-put">PUT</span> <code>/carts/:id</code> &rarr; Modifier quantites</li>
+        <li><span class="api-tag api-tag-delete">DELETE</span> <code>/carts/:id</code> &rarr; Vider le panier</li>
+      </ul>
+    </div>
+
+    <div class="page-map-card">
+      <h4>Page Checkout</h4>
+      <div class="file">Maquette : checkout.html</div>
+      <ul>
+        <li><span class="api-tag">GET</span> <code>/carts/:id</code> &rarr; Recap commande</li>
+        <li><span class="api-tag api-tag-post">POST</span> <code>/orders</code> &rarr; Creer la commande</li>
+        <li><span class="api-tag api-tag-delete">DELETE</span> <code>/carts/:id</code> &rarr; Vider apres commande</li>
+      </ul>
+    </div>
+
+    <div class="page-map-card">
+      <h4>Barre de Recherche</h4>
+      <div class="file">Presente sur toutes les pages</div>
+      <ul>
+        <li><span class="api-tag">GET</span> <code>/products?q=mot_cle</code> &rarr; Recherche globale</li>
+        <li><span class="api-tag">GET</span> <code>...?categoryId=xxx&q=mot</code> &rarr; Recherche dans une categorie</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 6 - API CATEGORIES -->
+<!-- ============================================ -->
+<section id="section-api-categories" class="page-break">
+  <h2>6. API Categories</h2>
+  <p>Les categories representent les marques du menu de navigation.</p>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-get">GET</span>
+      <span class="url">/categories</span>
+      <span class="desc">Liste toutes les categories</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Utilisation :</strong> Menu de navigation (Navbar), Footer, filtres lateraux</p>
+      <pre><code><span class="comment">// Reponse</span>
+[
+  { <span class="string">"id"</span>: <span class="string">"100"</span>,  <span class="string">"name"</span>: <span class="string">"Apple"</span>,   <span class="string">"image"</span>: <span class="string">"apple-logo.png"</span> },
+  { <span class="string">"id"</span>: <span class="string">"c200"</span>, <span class="string">"name"</span>: <span class="string">"Samsung"</span>, <span class="string">"image"</span>: <span class="string">"samsung-logo.png"</span> },
+  { <span class="string">"id"</span>: <span class="string">"c300"</span>, <span class="string">"name"</span>: <span class="string">"LG"</span>,      <span class="string">"image"</span>: <span class="string">"lg-logo.png"</span> },
+  { <span class="string">"id"</span>: <span class="string">"c400"</span>, <span class="string">"name"</span>: <span class="string">"Huawei"</span>,  <span class="string">"image"</span>: <span class="string">"huawei-logo.png"</span> },
+  { <span class="string">"id"</span>: <span class="string">"c500"</span>, <span class="string">"name"</span>: <span class="string">"Sony"</span>,    <span class="string">"image"</span>: <span class="string">"sony-logo.png"</span> }
+]</code></pre>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-get">GET</span>
+      <span class="url">/categories/:id</span>
+      <span class="desc">Une categorie par ID</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Exemple :</strong> <code>GET /categories/100</code> &rarr; <code>{ "id": "100", "name": "Apple", "image": "apple-logo.png" }</code></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 7 - API PRODUCTS -->
+<!-- ============================================ -->
+<section id="section-api-products">
+  <h2>7. API Products</h2>
+  <p>L'endpoint principal du site. Supporte filtrage, recherche, pagination et tri.</p>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-get">GET</span>
+      <span class="url">/products</span>
+      <span class="desc">Tous les produits (244)</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Attention :</strong> Retourne les 244 produits d'un coup. Privilegiez toujours les filtres et la pagination.</p>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-get">GET</span>
+      <span class="url">/products/:id</span>
+      <span class="desc">Detail d'un produit</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Utilisation :</strong> Page detail produit</p>
+      <p><strong>Exemple :</strong> <code>GET /products/1015</code> retourne le produit complet avec <code>categoryId</code>, <code>categoryName</code>, <code>description</code>, etc.</p>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-get">GET</span>
+      <span class="url">/products?categoryId=xxx</span>
+      <span class="desc">Produits par categorie</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Utilisation :</strong> Page Shop quand on clique sur une categorie dans le menu</p>
+      <table>
+        <thead><tr><th>URL</th><th>Resultat</th></tr></thead>
+        <tbody>
+          <tr><td><code>/products?categoryId=100</code></td><td>38 produits Apple</td></tr>
+          <tr><td><code>/products?categoryId=c200</code></td><td>84 produits Samsung</td></tr>
+          <tr><td><code>/products?categoryId=c300</code></td><td>53 produits LG</td></tr>
+          <tr><td><code>/products?categoryId=c400</code></td><td>39 produits Huawei</td></tr>
+          <tr><td><code>/products?categoryId=c500</code></td><td>30 produits Sony</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-get">GET</span>
+      <span class="url">/products?type=xxx</span>
+      <span class="desc">Produits par type</span>
+    </div>
+    <div class="api-card-body">
+      <table>
+        <thead><tr><th>URL</th><th>Resultat</th></tr></thead>
+        <tbody>
+          <tr><td><code>/products?type=phone</code></td><td>218 smartphones</td></tr>
+          <tr><td><code>/products?type=tablet</code></td><td>21 tablettes</td></tr>
+          <tr><td><code>/products?type=watch</code></td><td>5 montres</td></tr>
+        </tbody>
+      </table>
+      <div class="tip">
+        <strong>Combinaison :</strong> <code>/products?categoryId=c200&type=tablet</code> &rarr; Tablettes Samsung uniquement
+      </div>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-get">GET</span>
+      <span class="url">/products?q=mot_cle</span>
+      <span class="desc">Recherche full-text</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Utilisation :</strong> Barre de recherche du site</p>
+      <table>
+        <thead><tr><th>URL</th><th>Resultat</th></tr></thead>
+        <tbody>
+          <tr><td><code>/products?q=iphone</code></td><td>21 resultats</td></tr>
+          <tr><td><code>/products?q=galaxy</code></td><td>82 resultats</td></tr>
+          <tr><td><code>/products?q=xperia</code></td><td>29 resultats</td></tr>
+          <tr><td><code>/products?q=pro</code></td><td>19 resultats (Apple + Samsung + Huawei)</td></tr>
+        </tbody>
+      </table>
+      <div class="warning">
+        <strong>Important :</strong> Le parametre s'appelle <code>q</code> (pas <code>search</code>, pas <code>keyword</code>). C'est la convention json-server pour le full-text search.
+      </div>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-get">GET</span>
+      <span class="url">/products?isTopSeller=true</span>
+      <span class="desc">Produits les plus vendus</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Utilisation :</strong> Section "Top Sellers" sur la page d'accueil. Retourne 3 produits.</p>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-get">GET</span>
+      <span class="url">/products?isNewProduct=true</span>
+      <span class="desc">Nouveautes</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Utilisation :</strong> Section "Top New" sur la page d'accueil. Retourne 3 produits.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 8 - API SLIDES -->
+<!-- ============================================ -->
+<section id="section-api-slides" class="page-break">
+  <h2>8. API Slides (Carousel)</h2>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-get">GET</span>
+      <span class="url">/slides</span>
+      <span class="desc">Slides du carousel</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Utilisation :</strong> Carousel / Slider sur la page d'accueil</p>
+      <pre><code>[
+  { <span class="string">"id"</span>: <span class="number">1</span>, <span class="string">"image"</span>: <span class="string">"h4-slide.png"</span>,  <span class="string">"title"</span>: <span class="string">"New Collection 2024"</span>,  <span class="string">"subtitle"</span>: <span class="string">"..."</span>, <span class="string">"link"</span>: <span class="string">"/shop"</span> },
+  { <span class="string">"id"</span>: <span class="number">2</span>, <span class="string">"image"</span>: <span class="string">"h4-slide2.png"</span>, <span class="string">"title"</span>: <span class="string">"Best Deals"</span>,           <span class="string">"subtitle"</span>: <span class="string">"..."</span>, <span class="string">"link"</span>: <span class="string">"/shop"</span> },
+  { <span class="string">"id"</span>: <span class="number">3</span>, <span class="string">"image"</span>: <span class="string">"h4-slide3.png"</span>, <span class="string">"title"</span>: <span class="string">"Premium Brands"</span>,       <span class="string">"subtitle"</span>: <span class="string">"..."</span>, <span class="string">"link"</span>: <span class="string">"/shop"</span> },
+  { <span class="string">"id"</span>: <span class="number">4</span>, <span class="string">"image"</span>: <span class="string">"h4-slide4.png"</span>, <span class="string">"title"</span>: <span class="string">"Free Shipping"</span>,        <span class="string">"subtitle"</span>: <span class="string">"..."</span>, <span class="string">"link"</span>: <span class="string">"/shop"</span> }
+]</code></pre>
+      <p>Les images des slides sont dans <code>MaquetteExo/.../img/h4-slide*.png</code></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 9 - API CART -->
+<!-- ============================================ -->
+<section id="section-api-cart">
+  <h2>9. API Cart (Panier) - Cycle de vie complet</h2>
+
+  <div class="danger-box">
+    <strong>Concept cle :</strong> json-server n'a aucune notion de session. C'est a <strong>vous</strong> de gerer l'identifiant du panier. Le principe : faire un <code>POST /carts</code> pour obtenir un <code>id</code>, le stocker (cookie ou localStorage), puis utiliser cet <code>id</code> pour tous les appels <code>GET</code> et <code>PUT</code> jusqu'a la confirmation de la commande.
+  </div>
+
+  <div class="warning" style="border-left-color: var(--purple); background: var(--purple-light);">
+    <strong style="color: var(--purple);">Exigence technique :</strong> La gestion du panier (state, actions, reducers) <strong>doit etre implementee avec Redux</strong> (Redux Toolkit recommande). Les autres parties du site (categories, produits, recherche, slides) peuvent utiliser des <code>useState</code> / <code>useEffect</code> classiques ou tout autre approche de votre choix.
+  </div>
+
+  <h3>Cycle de vie du panier</h3>
+
+  <div class="lifecycle">
+    <div class="lifecycle-step">
+      <div class="lifecycle-num">1</div>
+      <div class="lifecycle-content">
+        <strong>POST /carts &rarr; Creer le panier</strong>
+        <span>Au premier "Add to cart", envoyer un POST pour obtenir un <code>id</code> genere par json-server.</span>
+      </div>
+    </div>
+    <div class="lifecycle-line"></div>
+    <div class="lifecycle-step">
+      <div class="lifecycle-num green">2</div>
+      <div class="lifecycle-content">
+        <strong>Stocker l'id (localStorage ou cookie)</strong>
+        <span>Sauvegarder le <code>cartId</code> recu pour l'utiliser dans toutes les requetes suivantes. Le mettre aussi dans un state React.</span>
+      </div>
+    </div>
+    <div class="lifecycle-line"></div>
+    <div class="lifecycle-step">
+      <div class="lifecycle-num orange">3</div>
+      <div class="lifecycle-content">
+        <strong>GET /carts/:id &rarr; Lire le panier</strong>
+        <span>A chaque chargement de page ou refresh, recuperer le panier avec l'id stocke.</span>
+      </div>
+    </div>
+    <div class="lifecycle-line"></div>
+    <div class="lifecycle-step">
+      <div class="lifecycle-num orange">4</div>
+      <div class="lifecycle-content">
+        <strong>PUT /carts/:id &rarr; Modifier le panier</strong>
+        <span>A chaque ajout/suppression de produit ou changement de quantite, envoyer le panier complet mis a jour.</span>
+      </div>
+    </div>
+    <div class="lifecycle-line"></div>
+    <div class="lifecycle-step">
+      <div class="lifecycle-num red">5</div>
+      <div class="lifecycle-content">
+        <strong>POST /orders + DELETE /carts/:id &rarr; Confirmer la commande</strong>
+        <span>Creer la commande, supprimer le panier cote serveur, puis <strong>supprimer le cartId du localStorage</strong> et reinitialiser le state. Un nouveau POST sera fait au prochain achat.</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Detail des endpoints</h3>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-post">POST</span>
+      <span class="url">/carts</span>
+      <span class="desc">Creer un nouveau panier</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Quand :</strong> Premier ajout au panier (quand aucun <code>cartId</code> n'existe dans le storage)</p>
+      <pre><code><span class="comment">// Envoyez le panier avec le premier produit</span>
+<span class="comment">// Headers: Content-Type: application/json</span>
+<span class="comment">// Body :</span>
+{
+  <span class="string">"total"</span>: <span class="number">240.24</span>,
+  <span class="string">"subTotal"</span>: <span class="number">200.20</span>,
+  <span class="string">"tax"</span>: <span class="number">40.04</span>,
+  <span class="string">"items"</span>: [
+    {
+      <span class="string">"id"</span>: <span class="number">1015</span>,
+      <span class="string">"name"</span>: <span class="string">"apple iphone 11 pro max"</span>,
+      <span class="string">"imageName"</span>: <span class="string">"apple-iphone-11-pro-max-.jpg"</span>,
+      <span class="string">"price"</span>: <span class="number">308</span>,
+      <span class="string">"qty"</span>: <span class="number">1</span>
+    }
+  ]
+}
+
+<span class="comment">// Reponse (json-server genere automatiquement un id) :</span>
+{
+  <span class="string">"total"</span>: <span class="number">240.24</span>,
+  <span class="string">"subTotal"</span>: <span class="number">200.20</span>,
+  <span class="string">"tax"</span>: <span class="number">40.04</span>,
+  <span class="string">"items"</span>: [...],
+  <span class="string">"id"</span>: <span class="string">"xMrG3rM"</span>         <span class="comment">// &larr; STOCKER CET ID !</span>
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-get">GET</span>
+      <span class="url">/carts/:id</span>
+      <span class="desc">Recuperer le panier</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Quand :</strong> Au chargement de l'app, si un <code>cartId</code> existe dans le localStorage, recuperer le panier pour l'afficher.</p>
+      <p><strong>Exemple :</strong> <code>GET /carts/xMrG3rM</code></p>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-put">PUT</span>
+      <span class="url">/carts/:id</span>
+      <span class="desc">Mettre a jour le panier</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Quand :</strong> A chaque modification (ajout produit, +/- quantite, suppression d'un item)</p>
+      <p>Envoyer le panier <strong>complet</strong> (pas juste le changement). json-server remplace tout l'objet.</p>
+      <p><strong>Exemple :</strong> <code>PUT /carts/xMrG3rM</code> avec le body complet du panier mis a jour.</p>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-delete">DELETE</span>
+      <span class="url">/carts/:id</span>
+      <span class="desc">Supprimer le panier</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Quand :</strong> Apres la confirmation de la commande</p>
+      <p><strong>Exemple :</strong> <code>DELETE /carts/xMrG3rM</code></p>
+      <p>Apres cette requete, <strong>supprimer le cartId du localStorage</strong> et reinitialiser le state du panier a vide.</p>
+    </div>
+  </div>
+
+  <div class="warning">
+    <strong>Rappel :</strong> json-server ne fait <strong>aucune validation</strong>. Si vous envoyez un body vide <code>{}</code>, il creera quand meme un panier avec juste un <code>id</code>. C'est a vous de valider les donnees cote front avant d'envoyer les requetes.
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 10 - API ORDERS -->
+<!-- ============================================ -->
+<section id="section-api-orders" class="page-break">
+  <h2>10. API Orders (Commandes)</h2>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-post">POST</span>
+      <span class="url">/orders</span>
+      <span class="desc">Creer une commande</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Quand :</strong> L'utilisateur clique sur "Place order" dans le checkout</p>
+      <pre><code><span class="comment">// Body de la requete POST /orders</span>
+{
+  <span class="string">"total"</span>: <span class="number">456.80</span>,
+  <span class="string">"subTotal"</span>: <span class="number">380.67</span>,
+  <span class="string">"tax"</span>: <span class="number">76.13</span>,
+  <span class="string">"items"</span>: [
+    { <span class="string">"id"</span>: <span class="number">1015</span>, <span class="string">"name"</span>: <span class="string">"apple iphone 11 pro max"</span>, <span class="string">"price"</span>: <span class="number">308</span>, <span class="string">"qty"</span>: <span class="number">1</span> }
+  ],
+  <span class="string">"customer"</span>: {
+    <span class="string">"email"</span>: <span class="string">"client@email.com"</span>,
+    <span class="string">"phone"</span>: <span class="string">"0612345678"</span>,
+    <span class="string">"note"</span>: <span class="string">""</span>,
+    <span class="string">"billingAdress"</span>: {
+      <span class="string">"civility"</span>: <span class="string">"Mr"</span>,
+      <span class="string">"firstName"</span>: <span class="string">"Jean"</span>,
+      <span class="string">"lastName"</span>: <span class="string">"Dupont"</span>,
+      <span class="string">"zipCode"</span>: <span class="string">"75001"</span>,
+      <span class="string">"street"</span>: <span class="string">"1 rue de Rivoli"</span>,
+      <span class="string">"companyName"</span>: <span class="string">"ACME"</span>,
+      <span class="string">"county"</span>: <span class="string">"France"</span>,
+      <span class="string">"city"</span>: <span class="string">"Paris"</span>
+    },
+    <span class="string">"shippingAdress"</span>: {
+      <span class="comment">// Meme structure que billingAdress</span>
+      <span class="comment">// (si "Ship to different address" est coche)</span>
+    }
+  },
+  <span class="string">"paymentMethod"</span>: <span class="string">"paypal"</span>     <span class="comment">// "bacs" | "cheque" | "paypal"</span>
+}</code></pre>
+      <div class="tip">
+        <strong>Apres le POST /orders reussi :</strong> Pensez a supprimer le panier (<code>DELETE /carts/:id</code>), vider le localStorage (<code>cartId</code>), et reinitialiser le state. Un nouveau <code>cartId</code> sera genere au prochain achat.
+      </div>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-get">GET</span>
+      <span class="url">/orders</span>
+      <span class="desc">Liste des commandes</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Utilisation :</strong> Historique des commandes (bonus)</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 11 - RECHERCHE -->
+<!-- ============================================ -->
+<section id="section-search">
+  <h2>11. Recherche full-text en detail</h2>
+
+  <h3>Comment fonctionne <code>q=</code></h3>
+  <p>json-server cherche le mot dans <strong>tous les champs texte</strong> de chaque produit (name, description, categoryName, type). La recherche est <strong>insensible a la casse</strong>.</p>
+
+  <table>
+    <thead>
+      <tr><th>Scenario</th><th>URL</th><th>Resultats</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Recherche globale</td>
+        <td><code>/products?q=iphone</code></td>
+        <td>21 resultats (tous les iPhone, toutes categories)</td>
+      </tr>
+      <tr>
+        <td>Recherche dans une categorie</td>
+        <td><code>/products?categoryId=100&q=ipad</code></td>
+        <td>14 resultats (iPad Apple uniquement)</td>
+      </tr>
+      <tr>
+        <td>Recherche + type</td>
+        <td><code>/products?type=tablet&q=samsung</code></td>
+        <td>Tablettes Samsung</td>
+      </tr>
+      <tr>
+        <td>Recherche + pagination</td>
+        <td><code>/products?q=galaxy&_page=1&_limit=12</code></td>
+        <td>12 resultats + header X-Total-Count: 82</td>
+      </tr>
+      <tr>
+        <td>Recherche + tri</td>
+        <td><code>/products?q=xperia&_sort=price&_order=asc</code></td>
+        <td>29 resultats tries par prix croissant</td>
+      </tr>
+      <tr>
+        <td>Recherche cross-categories</td>
+        <td><code>/products?q=pro</code></td>
+        <td>19 resultats (Apple + Samsung + Huawei)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="flow">
+    <div class="flow-step">Utilisateur tape<br><strong>"galaxy"</strong></div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">fetch()<br><code>/products?q=galaxy</code></div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">json-server cherche<br>dans tous les champs</div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step flow-step-success">Retourne<br><strong>82 produits</strong></div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 12 - PAGINATION & TRI -->
+<!-- ============================================ -->
+<section id="section-pagination" class="page-break">
+  <h2>12. Pagination & Tri</h2>
+
+  <h3>Pagination</h3>
+  <p>json-server supporte la pagination nativement avec <code>_page</code> et <code>_limit</code>.</p>
+
+  <div class="api-card">
+    <div class="api-card-header">
+      <span class="method-badge method-get">GET</span>
+      <span class="url">/products?_page=1&_limit=12</span>
+      <span class="desc">Page 1, 12 produits par page</span>
+    </div>
+    <div class="api-card-body">
+      <p><strong>Header de reponse important :</strong></p>
+      <pre><code>X-Total-Count: 244          <span class="comment">// Nombre total de produits (dans le header HTTP)</span>
+Link: &lt;...?_page=2&_limit=12&gt;; rel="next",  <span class="comment">// Liens de navigation</span>
+      &lt;...?_page=21&_limit=12&gt;; rel="last"</code></pre>
+      <p>Utilisez <code>X-Total-Count</code> pour calculer le nombre total de pages.</p>
+    </div>
+  </div>
+
+  <h3>Tri</h3>
+  <table>
+    <thead>
+      <tr><th>URL</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>?_sort=price&_order=asc</code></td><td>Prix croissant (moins cher d'abord)</td></tr>
+      <tr><td><code>?_sort=price&_order=desc</code></td><td>Prix decroissant (plus cher d'abord)</td></tr>
+      <tr><td><code>?_sort=review&_order=desc</code></td><td>Meilleures notes d'abord</td></tr>
+      <tr><td><code>?_sort=name&_order=asc</code></td><td>Ordre alphabetique</td></tr>
+      <tr><td><code>?_sort=discountRate&_order=desc</code></td><td>Plus grosses remises d'abord</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Combinaison complete</h3>
+  <pre><code><span class="comment">// Produits Samsung, type phone, page 2, 12/page, tries par prix croissant</span>
+GET /products?categoryId=c200&type=phone&_page=2&_limit=12&_sort=price&_order=asc
+
+<span class="comment">// Recherche "pro" dans toutes les categories, page 1, tries par note</span>
+GET /products?q=pro&_page=1&_limit=12&_sort=review&_order=desc</code></pre>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 13 - TRAVAIL A REALISER -->
+<!-- ============================================ -->
+<section id="section-travail" class="page-break">
+  <h2>13. Travail a realiser</h2>
+
+  <div class="danger-box">
+    <strong>Avant de coder :</strong> Vous devez d'abord analyser le projet, decouper le travail en taches et estimer la charge necessaire pour chaque partie. Ce travail de preparation est <strong>obligatoire</strong> et sera evalue.
+  </div>
+
+  <h3>Etape 1 : Analyse & Decoupage du projet</h3>
+  <p>A partir de ce guide API et des maquettes HTML fournies, vous devez produire :</p>
+
+  <table>
+    <thead>
+      <tr><th>Livrable</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Arborescence des composants</strong></td>
+        <td>Identifiez et listez tous les composants React necessaires a partir des maquettes (Header, Navbar, ProductCard, CartItem, CheckoutForm, etc.). Preciser pour chaque composant : son role, ses props, et dans quelle(s) page(s) il est utilise.</td>
+      </tr>
+      <tr>
+        <td><strong>Liste des pages / routes</strong></td>
+        <td>Listez toutes les pages avec leur route React Router et les endpoints API associes (cf. section 5 - Mapping).</td>
+      </tr>
+      <tr>
+        <td><strong>Estimation de charge</strong></td>
+        <td>Pour chaque section ci-dessous, estimez le temps necessaire (en heures ou en jours). Justifiez vos estimations.</td>
+      </tr>
+      <tr>
+        <td><strong>Choix technique CSS</strong></td>
+        <td>Indiquez votre choix d'approche CSS (maquette statique / SCSS / Tailwind) et justifiez-le.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Etape 2 : Sections a estimer et developper</h3>
+  <p>Decoupez votre charge de travail selon les sections suivantes :</p>
+
+  <div class="api-card">
+    <div class="api-card-header" style="background: var(--primary-light);">
+      <span class="method-badge" style="background: var(--primary); color: white;">A</span>
+      <span class="url" style="font-family: var(--font-sans); font-weight: 700;">Setup & Structure</span>
+      <span class="desc">Estimation : ? jours</span>
+    </div>
+    <div class="api-card-body">
+      <p style="font-size: 14px; color: var(--gray-600);">Initialisation du projet, configuration de l'environnement de developpement, mise en place du routing et de l'architecture de base.</p>
+      <p style="font-size: 13px; color: var(--gray-500); font-style: italic;">A vous d'identifier les outils, la structure de dossiers et les configurations necessaires.</p>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header" style="background: var(--primary-light);">
+      <span class="method-badge" style="background: var(--primary); color: white;">B</span>
+      <span class="url" style="font-family: var(--font-sans); font-weight: 700;">Page Accueil</span>
+      <span class="desc">Estimation : ? jours</span>
+    </div>
+    <div class="api-card-body">
+      <p style="font-size: 14px; color: var(--gray-600);">Reproduire la page d'accueil de la maquette <code>index.html</code> en React. Referez-vous a la section 5 (Mapping) pour les endpoints a utiliser.</p>
+      <p style="font-size: 13px; color: var(--gray-500); font-style: italic;">A vous d'analyser la maquette, d'identifier les composants necessaires et de proposer votre decoupage.</p>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header" style="background: var(--primary-light);">
+      <span class="method-badge" style="background: var(--primary); color: white;">C</span>
+      <span class="url" style="font-family: var(--font-sans); font-weight: 700;">Page Shop & Recherche</span>
+      <span class="desc">Estimation : ? jours</span>
+    </div>
+    <div class="api-card-body">
+      <p style="font-size: 14px; color: var(--gray-600);">Reproduire la page liste de produits de la maquette <code>shop.html</code> en React, avec filtrage par categorie, pagination, tri et recherche. Referez-vous aux sections 5, 11 et 12 pour les endpoints et parametres disponibles.</p>
+      <p style="font-size: 13px; color: var(--gray-500); font-style: italic;">A vous d'identifier les composants necessaires et de proposer votre decoupage.</p>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header" style="background: var(--primary-light);">
+      <span class="method-badge" style="background: var(--primary); color: white;">D</span>
+      <span class="url" style="font-family: var(--font-sans); font-weight: 700;">Page Detail Produit</span>
+      <span class="desc">Estimation : ? jours</span>
+    </div>
+    <div class="api-card-body">
+      <p style="font-size: 14px; color: var(--gray-600);">Reproduire la page detail produit de la maquette <code>product.html</code> en React. Referez-vous a la section 5 (Mapping) pour les endpoints a utiliser.</p>
+      <p style="font-size: 13px; color: var(--gray-500); font-style: italic;">A vous d'analyser la maquette, d'identifier les composants necessaires et de proposer votre decoupage.</p>
+    </div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-card-header" style="background: var(--purple-light); border-bottom-color: var(--purple);">
+      <span class="method-badge" style="background: var(--purple); color: white;">E</span>
+      <span class="url" style="font-family: var(--font-sans); font-weight: 700;">Panier & Checkout</span>
+      <span class="desc">Estimation : ? jours</span>
+    </div>
+    <div class="api-card-body">
+      <div class="warning" style="border-left-color: var(--purple); background: var(--purple-light); margin-top: 0;">
+        <strong style="color: var(--purple);">Obligatoire : Cette section doit etre implementee avec Redux (Redux Toolkit recommande).</strong><br>
+        Les autres sections (A, B, C, D) peuvent utiliser <code>useState</code> / <code>useEffect</code> ou toute autre approche de votre choix.
+      </div>
+      <p style="font-size: 14px; color: var(--gray-600);">Reproduire les pages panier (<code>cart.html</code>) et checkout (<code>checkout.html</code>) en React avec gestion d'etat Redux. Implementez le cycle de vie complet du panier decrit en section 9 et le processus de commande decrit en section 10.</p>
+      <p style="font-size: 13px; color: var(--gray-500); font-style: italic;">A vous d'analyser les maquettes, d'identifier les composants necessaires, de proposer votre decoupage et de concevoir la structure du store Redux (slices, actions, reducers).</p>
+    </div>
+  </div>
+
+  <h3>Etape 3 : Format du livrable de preparation</h3>
+  <p>Avant de commencer le developpement, presentez un document (Markdown, Word, ou autre) contenant :</p>
+
+  <table>
+    <thead>
+      <tr><th>#</th><th>Section</th><th>Composants identifies</th><th>APIs utilisees</th><th>Charge estimee</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>A</td><td>Setup & Structure</td><td><em>A vous de definir</em></td><td>-</td><td>? jours</td></tr>
+      <tr><td>B</td><td>Page Accueil</td><td><em>A vous de proposer</em></td><td><em>A vous d'identifier</em></td><td>? jours</td></tr>
+      <tr><td>C</td><td>Page Shop & Recherche</td><td><em>A vous de proposer</em></td><td><em>A vous d'identifier</em></td><td>? jours</td></tr>
+      <tr><td>D</td><td>Page Detail Produit</td><td><em>A vous de proposer</em></td><td><em>A vous d'identifier</em></td><td>? jours</td></tr>
+      <tr style="background: var(--purple-light);">
+        <td><strong>E</strong></td>
+        <td><strong>Panier & Checkout (Redux)</strong></td>
+        <td><em>A vous de proposer</em></td>
+        <td><em>A vous d'identifier</em></td>
+        <td>? jours</td>
+      </tr>
+      <tr><td colspan="4" style="text-align: right; font-weight: 700;">Total estime</td><td><strong>? jours</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <strong>Conseil :</strong> Soyez realistes dans vos estimations. Un bon decoupage montre que vous avez compris la complexite du projet. N'hesitez pas a identifier les risques ou les points bloquants potentiels.
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <p>MyStore API Guide &bull; Exercice React.js &bull; json-server sur localhost:3001</p>
+</footer>
+
+</body>
+</html>

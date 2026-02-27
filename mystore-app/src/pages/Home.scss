@@ -1,0 +1,16 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+.home-page {
+  max-width: 1200px;
+  
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.home-loading {
+  height: 60vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+}
