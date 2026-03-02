@@ -1,17 +1,22 @@
 import type { Product } from "../../modals/Product";
 import { useNavigate } from "react-router-dom";
 import "./ProductCard.scss";
+import { useAppDispatch } from "../../redux/store";
+import { cartActions, syncCart } from "../../redux/slices/cartSlice";
+
 
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   console.log("RENDERING ProductCard");
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const handleAddToCart = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        console.log("Add to cart :", product.id);
+        e.stopPropagation(); // Prevent card click event
+        dispatch(cartActions.addItemToCart({ product, quantity: 1 }));
+        dispatch(syncCart());
     }
     const discountedPrice = (product.price * (1 - product.discountRate / 100)).toFixed(2);
     const handleNavigate = () => {
-        navigate(`/product/${product.id}`);
+        navigate(`/products/${product.id}`);
     }
     return (
         <div className="product-card" onClick={handleNavigate}>

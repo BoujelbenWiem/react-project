@@ -21,28 +21,7 @@ export const getNewProducts = async (): Promise<Product[]> => {
   }
 };
 
-export const getProductsByCategory = async (categoryId: string, page: number = 1, limit: number = 6, sort?: string, order?: string, q?: string): Promise<{data: Product[]; total: number}> => {
-  try {
-    const params: any = {
-      categoryId,
-      _page: page,
-      _limit: limit,
-    };
-    if (sort && order) {
 
-      params._sort = sort;
-      params._order = order;
-    }
-    if (q) {
-      params.q = q;
-    }
-    const response = await api.get<Product[]>('/products', { params });  
-    return {data: response.data, total : Number(response.headers['x-total-count'])};  
-  } catch (error) {
-    console.error(`Error fetching products for category ${categoryId}:`, error);
-    throw error;
-  }
-};
 
 export const getProducts =async (
   params: Record<string, string | number>

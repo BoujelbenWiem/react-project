@@ -1,0 +1,56 @@
+@import '../../styles/variables';
+
+.notification {
+  position: fixed;
+  top: 32px;
+  right: 32px;
+  min-width: 300px;
+  max-width: 400px;
+  padding: 20px 32px 20px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  background: #fff;
+  z-index: 1000;
+  transform: translateX(120%);
+  opacity: 0;
+  animation: slideInRight 0.5s cubic-bezier(0.4,0,0.2,1) forwards;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  h3 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  p {
+    margin: 0;
+    font-size: 15px;
+  }
+
+  &.success {
+    border-left: 6px solid #22c55e;
+    background: #f0fdf4;
+    color: #166534;
+  }
+  &.error {
+    border-left: 6px solid #ef4444;
+    background: #fef2f2;
+    color: #991b1b;
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  80% {
+    transform: translateX(-16px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

@@ -1,22 +1,22 @@
 
-@import './variables';
-@import './mixins';
-@import './reset';
-body {
-  font-family: $font-family-base;
-  background-color: $bg-color;
-  color: $text-color;
-}
-
-.container {
-  max-width: $container-width;
-  margin: 0 auto;
-  padding: 0 $spacing-md;
-}
-
-// Responsive container
-.container {
-  @include mobile {
-    padding: 0 $spacing-sm;
+  @import './variables';
+  @import './mixins';
+  @import './reset';
+  body {
+    font-family: $font-family-base;
+    background-color: $bg-color;
+    color: $text-color;
   }
-}
+
+  .container {
+    max-width: $container-width;
+    margin: 0 auto;
+    padding: 0 $spacing-md;
+  }
+
+  // Responsive container
+  .container {
+    @include mobile {
+      padding: 0 $spacing-sm;
+    }
+  }

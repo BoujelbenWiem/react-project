@@ -1,0 +1,99 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.payment-form {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  h2 {
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .payment-options {
+    display: flex;
+    gap: 20px;
+
+    label {
+      flex: 1;
+      padding: 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f9fafb;
+      transition: 0.25s ease;
+
+      input {
+        display: none;
+      }
+
+      span {
+        font-size: 15px;
+        font-weight: 500;
+      }
+
+      &:hover {
+        border-color: $primary-color;
+      }
+
+      &.active {
+        border-color: $primary-color;
+        background: rgba($primary-color, 0.1);
+      }
+    }
+  }
+
+  .card-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    animation: fadeIn 0.3s ease;
+
+    input {
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+
+      &:focus {
+        border-color: $primary-color;
+        outline: none;
+      }
+    }
+
+    .card-row {
+      display: flex;
+      gap: 10px;
+
+      input {
+        flex: 1;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@include mobile {
+  .payment-options {
+    flex-direction: column;
+  }
+
+  .card-row {
+    flex-direction: column;
+  }
+}

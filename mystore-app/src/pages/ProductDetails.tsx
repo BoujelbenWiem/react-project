@@ -1,7 +1,14 @@
+import ProductDetails from "../components/product/ProductDetails";
+
+
 const ProductDetailsPage = () => {
+    console.log("Rendering ProductDetailsPage");
+  
+       
+
     return (
         <div>
-            <h2>Product Details</h2>
+            <ProductDetails />
         </div>
     )
 }

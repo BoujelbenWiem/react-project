@@ -2,23 +2,14 @@ import { Link } from "react-router-dom";
 import "./Footer.scss";
 import type { Category } from "../../modals/Category";
 import { getCategories } from "../../services/categories.service";
-import { useEffect, useState } from "react";
-
-
+import useFetch from "../hooks/useFetch";
+import Loader from "../ui/Loader";
 const Footer = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await getCategories();
-        setCategories(data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    fetchCategories();
-  }, []);
+  const { data: categories, loading, error } = useFetch<Category[]>(getCategories, []);
+  
+  if (loading) return <Loader />;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <footer className="footer">
@@ -32,19 +23,20 @@ const Footer = () => {
           </p>
         </div>
 
-        
-
         <div className="footer__column">
           <h3 className="footer__title">Categories</h3>
           <ul className="footer__links">
-            {categories.map((category) => (
-              <li key={category.id}>
-                <Link to={`/shop?categoryId=${category.id}`}>{category.name}</Link>
-              </li>
-            ))}
+            {categories?.length ? (
+              categories.map((category) => (
+                <li key={category.id}>
+                  <Link to={`/shop?categoryId=${category.id}`}>{category.name}</Link>
+                </li>
+              ))
+            ) : (
+              <li>No categories available</li>
+            )}
           </ul>
         </div>
-
 
         <div className="footer__column">
           <h3 className="footer__title">Newsletter</h3>
