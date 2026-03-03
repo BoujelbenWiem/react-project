@@ -1,13 +1,8 @@
 import "./CartSummary.scss";
 import type { Cart } from "../../modals/Cart";
-import { useNavigate } from "react-router-dom";
 
 const CartSummary: React.FC<{ cart: Cart }> = ({ cart }) => {
-  const navigate = useNavigate();
-
-  const handleCheckout = () => {
-    navigate("/cart/checkout");
-  };
+ 
 
   return (
     <div className="cart-summary">
@@ -29,13 +24,7 @@ const CartSummary: React.FC<{ cart: Cart }> = ({ cart }) => {
         <span>${cart.total.toFixed(2)}</span>
       </div>
 
-      <button
-        className="cart-summary__checkout"
-        disabled={cart.items.length === 0}
-        onClick={handleCheckout}
-      >
-        Proceed to Checkout
-      </button >
+      
     </div>
   );
 };

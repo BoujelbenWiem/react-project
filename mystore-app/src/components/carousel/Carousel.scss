@@ -1,5 +1,24 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
+.brands {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 20px;
+    padding: 10px 0;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+
+    img {
+        max-height: 100px;
+        object-fit: contain;
+        transition: transform 0.2s ease-in-out;
+
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+}
 .carousel {
   position: relative;
   width: 100%;

@@ -4,7 +4,7 @@ import type { Product } from "../../modals/Product";
 import { useState ,useMemo,useCallback} from "react";
 import Loader from "../ui/Loader";
 
-const ProductList: React.FC<{ products: Product[]; maxDisplay?: number; title: string; previewMode?: boolean; loading?: boolean }> = ({ products, maxDisplay = 3, title, previewMode = false, loading = false }) => {
+const ProductList: React.FC<{ products: Product[]; maxDisplay?: number; title: string; previewMode?: boolean; loading?: boolean }> = ({ products, maxDisplay = 3, title = "", previewMode = false, loading = false }) => {
   console.log("RENDERING ProductList");
   const [showAll, setShowAll] = useState(false);
   const displayedProducts = useMemo(() => {
@@ -20,7 +20,7 @@ const ProductList: React.FC<{ products: Product[]; maxDisplay?: number; title: s
     return (
         <section className="product-list">
       <h2 className="product-list-title">{title}</h2>
-      {previewMode && products.length > maxDisplay && !previewMode && (
+      {previewMode && products.length > maxDisplay &&  (
         <button
           className="view-toggle" onClick={toggleView}
         >

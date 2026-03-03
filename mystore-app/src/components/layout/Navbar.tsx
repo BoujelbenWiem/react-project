@@ -1,22 +1,16 @@
 import './Navbar.scss';
 import { Link } from 'react-router-dom';
-import type { Category } from "../../modals/Category";
 import { getCategories } from "../../services/categories.service";
-import { useEffect,useState } from "react";
-const Navbar: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
+import useFetch from "../hooks/useFetch";
+import ErrorMessage from "../ui/ErrorMessage";
+import Loader from "../ui/Loader";
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await getCategories();
-        setCategories(data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    fetchCategories();
-  }, []);
+const Navbar: React.FC = () => {
+  const { data: categories, loading, error } = useFetch(getCategories, []);
+
+  if (loading) return <Loader />;
+  if (error) return <ErrorMessage message="Error loading categories" />;
+  if (!categories) return <ErrorMessage message="No categories found" />;
 
   return (
     <nav>
@@ -24,12 +18,16 @@ const Navbar: React.FC = () => {
         <li>
           <Link to="/">Home</Link>
         </li>
+        <li>
+          <Link to="/shop">Shop</Link>
+        </li>
         {categories.map((category) => (
           <li key={category.id}>
             <Link to={`/shop?categoryId=${category.id}`}>
               {category.name}
             </Link>
           </li>
+
         ))}
 
         

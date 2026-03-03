@@ -1,10 +1,10 @@
 import './Pagination.scss';
-
 const Pagination: React.FC<{
     currentPage: number;
     totalPages: number;
     onPageChange: (page: number) => void;   
 }> = ({ currentPage, totalPages, onPageChange }) => {
+    console.log("Rendering Pagination: ");
     const getVisiblePages = () => {
         if (totalPages <= 3) {
             return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -44,4 +44,4 @@ const Pagination: React.FC<{
         </div>
     );
 }
-export default Pagination;
+export default Pagination ;

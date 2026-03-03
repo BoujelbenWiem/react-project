@@ -5,15 +5,21 @@ import type { Product } from "../../modals/Product";
 import useFetch from "../hooks/useFetch";
 import './CartItemComp.scss';
 import { getProductById } from "../../services/products.service";
+import ErrorMessage from "../ui/ErrorMessage";
+import Loader from "../ui/Loader";
 type CartItemProps = {
     item: CartItem;
 }
 const CartItemComp :React.FC<CartItemProps> = ({ item }) => {
+      const dispatch = useAppDispatch();
+
     const productId = item.id;
-    const { data: product } = useFetch<Product>(() => getProductById(productId), [productId]);
+    const { data: product  , loading, error } = useFetch<Product>(() => getProductById(productId), [productId]);
 
+    if (loading) return <Loader />;
+    if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
+    if (!product) return <ErrorMessage message="Product not found" onRetry={() => window.location.reload()} />;
 
-    const dispatch = useAppDispatch();
     const increaseQty = () => {
         dispatch(cartActions.addItemToCart({ product: item, quantity: 1 }));
         dispatch(syncCart());

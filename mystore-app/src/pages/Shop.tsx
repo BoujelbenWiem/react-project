@@ -5,11 +5,13 @@ import { useSearchParams} from "react-router-dom";
 import { getProducts } from "../services/products.service";
 import Pagination from "../components/ui/Pagination";
 import useFetch from "../components/hooks/useFetch";
+import ErrorMessage from "../components/ui/ErrorMessage";
 
-
+import SearchBar from "../components/layout/SearchBar";
 
 
 const ShopPage = () => {
+    console.log("RENDERING ShopPage");
     const limit = 8;
     const [searchParams,setSearchParams] = useSearchParams();
 
@@ -18,6 +20,8 @@ const ShopPage = () => {
     const sortParam = searchParams.get("sort") || "";
     const orderParam = searchParams.get("order") || "";
     const searchQuery = searchParams.get("q") || "";
+    const typeParam = searchParams.get("type") || "";
+    
     console.log("PAGE PARAM :", pageParam);
     console.log("SORT PARAM :", sortParam);
     console.log("ORDER PARAM :", orderParam);
@@ -33,9 +37,10 @@ const ShopPage = () => {
                 _page: pageParam,
                 _limit: limit,
                 ...(sortParam && orderParam && { _sort: sortParam, _order: orderParam }),
-                ...(searchQuery && { q: searchQuery })
+                ...(searchQuery && { q: searchQuery }),
+                ...(typeParam && { type: typeParam })
             })
-        , [categoryId, pageParam, sortParam, orderParam, searchQuery]);
+        , [categoryId, pageParam, sortParam, orderParam, searchQuery, typeParam]);
 
     const products=data?.data || [];
     const total=data?.total || 0;
@@ -43,7 +48,7 @@ const ShopPage = () => {
 
          
     
-    if (error) return <div className="error">{error}</div>;
+    if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
     const handlePageChange = (newPage: number) => {
   const params = new URLSearchParams(searchParams);
   params.set("page", newPage.toString());
@@ -62,10 +67,22 @@ const ShopPage = () => {
         setSearchParams(params);
     }
 
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleCategorySearch = (searchTerm: string) => {
         const params = new URLSearchParams(searchParams);
-        params.set("q", e.target.value);
+        params.set("q", searchTerm);
         params.set("page", "1");
+        if(categoryId){
+            params.set("categoryId", categoryId);
+        }
+        setSearchParams(params);
+    }
+    const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const params = new URLSearchParams(searchParams);
+        if(!e.target.value){
+            params.delete("type");
+        } else {
+            params.set("type", e.target.value);
+        }
         setSearchParams(params);
     }
     return (
@@ -79,11 +96,22 @@ const ShopPage = () => {
                         <option value="desc">Price High &#8594; Low</option>
                     </select>
                 </div>
+               
             </div>
+            {!categoryId && <div className="shop-controls">
+                <select className="type-select" value={typeParam} onChange={handleTypeChange}>
+                    <option value="">All Types</option>
+                    <option value="tablet">Tablets</option>
+                    <option value="phone">Smartphones</option>
+                    <option value="watch">Watches</option>
 
+                </select>
+            </div>}
+ <div className="shop-search">
+                    {categoryId && <SearchBar value={searchQuery} onChange={(value) => handleCategorySearch(value)} onSearch={() => handleCategorySearch(searchQuery)} />}
+                </div>
 
-            <input type="text" placeholder="Search..." value={searchQuery} onChange={handleSearch} />
-            <ProductList title="Products" products={products} loading={loading}/>
+            <ProductList title="" products={products} loading={loading}/>
             <Pagination currentPage={pageParam} totalPages={totalPages} onPageChange={handlePageChange}/>
         </div>
     )

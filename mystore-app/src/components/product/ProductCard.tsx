@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./ProductCard.scss";
 import { useAppDispatch } from "../../redux/store";
 import { cartActions, syncCart } from "../../redux/slices/cartSlice";
+import { uiActions } from "../../redux/slices/uiSlice";
 
 
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
@@ -13,6 +14,11 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
         e.stopPropagation(); // Prevent card click event
         dispatch(cartActions.addItemToCart({ product, quantity: 1 }));
         dispatch(syncCart());
+        dispatch(uiActions.showNotification({
+          status: "success",
+          title: "Item Added",
+          message: 'Item added to cart. <a href="/cart">Go to cart</a>'
+        }));
     }
     const discountedPrice = (product.price * (1 - product.discountRate / 100)).toFixed(2);
     const handleNavigate = () => {

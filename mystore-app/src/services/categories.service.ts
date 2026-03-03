@@ -10,3 +10,13 @@ export const getCategories = async (): Promise<Category[]> => {
         throw error;
     }
 };
+
+export const getCategoryById = async (id: string): Promise<Category> => {
+    try {
+        const response = await api.get<Category>(`/categories/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching category with id ${id}:`, error);
+        throw error;
+    }
+};

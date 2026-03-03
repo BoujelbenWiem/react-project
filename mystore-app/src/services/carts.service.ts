@@ -1,5 +1,6 @@
 import api from "./api";
 import type { Cart } from "../modals/Cart";
+import type { Customer } from "../modals/Customer";
 
 export const getCart = async (): Promise<Cart> => {
     try {
@@ -50,7 +51,7 @@ export const deleteCart = async (id: string): Promise<void> => {
     }   
 };
 
-export const createOrder = async (cart: Cart, customer: any, paymentMethod: string): Promise<void> => {
+export const createOrder = async (cart: Cart, customer: Customer, paymentMethod: string): Promise<void> => {
     try {
         const orderBody = {
             total : cart.total,

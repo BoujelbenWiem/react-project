@@ -1,6 +1,6 @@
 import SearchBar from "./SearchBar";
 import MiniCart from "./MiniCart";
-import { Link} from "react-router-dom";
+import { Link ,useLocation} from "react-router-dom";
 import { useState } from "react";
 import "./Header.scss";
 import Logo from '../../assets/logo.svg';
@@ -8,9 +8,19 @@ import  {useNavigate} from "react-router-dom";
 const Header = () => {
     const [searchValue, setSearchValue] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
     const handleSearch=()=>{
-      if(!searchValue.trim()) return;
-      navigate(`/shop?q=${searchValue}&_page=1&_limit=8`);
+      const params = new URLSearchParams(location.search);
+      if (params.get("categoryId")) {
+        params.delete("categoryId"); // Clear category filter when searching
+      }
+      if(searchValue.trim()){
+        params.set("q", searchValue);
+      }else{
+        params.delete("q");
+      }
+      params.set("page", "1"); // Reset to first page on new search
+      navigate(`/shop?${params.toString()}`);
     }
     return (
          <header className="header">

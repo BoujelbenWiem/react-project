@@ -20,7 +20,7 @@ const Carousel: React.FC<{ slides: Slide[] , loading: boolean }> = ({ slides, lo
         return <div >No slides available</div>;
     }
     return (
-
+        <>
         <div className="carousel">
             <button className='prev' onClick={prevSlide}>&#10094;</button>
             <div className="slide" onClick={() => navigate(slides[currrent].link)}>
@@ -32,6 +32,14 @@ const Carousel: React.FC<{ slides: Slide[] , loading: boolean }> = ({ slides, lo
             </div>
             <button className='next' onClick={nextSlide}>&#10095;</button>
         </div>
+        <div className='brands'>
+            
+            {[1, 2, 3, 4, 5].map((num) => (
+                <img key={num} src={`/images/brands/brand${num}.png`} alt={`Brand ${num}`} />
+            ))}
+
+        </div>
+        </>
     );
 }
 

@@ -8,14 +8,18 @@ import Loader from "../ui/Loader";
 import "./ProductDetails.scss";
 import { cartActions } from "../../redux/slices/cartSlice";
 import { syncCart } from "../../redux/slices/cartSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../redux/store";
+import ErrorMessage from "../ui/ErrorMessage";
+import { uiActions } from "../../redux/slices/uiSlice";
+import Cookies from "js-cookie";
 
 const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const dispatch = useAppDispatch(); 
   const navigate = useNavigate();
   const { id } = useParams();
+
 
   const {
     data: product,
@@ -29,10 +33,31 @@ const ProductDetails = () => {
     error: errorCategories,
   } = useFetch<Category[]>(getCategories, []);
 
+  const updateRecentlyViewed = (productId: string) => {
+  const cookieKey = "recentlyViewed";
+  let recentlyViewed: string[] = [];
+  const cookieValue = Cookies.get(cookieKey);
+  if (cookieValue) {
+    try {      recentlyViewed = JSON.parse(cookieValue);
+    } catch{
+      recentlyViewed = [];
+    }
+  }
+  recentlyViewed=[productId, ...recentlyViewed.filter(id => id !== productId)];
+  recentlyViewed = recentlyViewed.slice(0, 10);
+  Cookies.set(cookieKey, JSON.stringify(recentlyViewed), { expires: 7 });
+}
+
+  useEffect(() => {
+    if (product?.id) {
+      updateRecentlyViewed(product.id.toString());
+    }
+  }, [product]);
+
   if (loadingProduct || loadingCategories) return <Loader />;
-  if (errorProduct) return <div>Error: {errorProduct}</div>;
-  if (errorCategories) return <div>Error: {errorCategories}</div>;
-  if (!product) return <div>Product not found</div>;
+  if (errorProduct) return <ErrorMessage message={errorProduct} onRetry={() => window.location.reload()} />;
+  if (errorCategories) return <ErrorMessage message={errorCategories} onRetry={() => window.location.reload()} />;
+  if (!product) return <ErrorMessage message="Product not found" onRetry={() => window.location.reload()} />;
 
   const imageUrl = `/images/products/${product.categoryName}/${product.imageName}`;
   const discountedPrice = (
@@ -43,7 +68,17 @@ const ProductDetails = () => {
  const handleAddToCart = () => {
   dispatch(cartActions.addItemToCart({ product, quantity: quantity }));
   dispatch(syncCart());
+  dispatch(uiActions.showNotification({
+    status: "success",
+    title: "Added to Cart",
+    message: `${quantity} x ${product.name} added to your cart. <a href="/cart">View Cart</a>`
+  }));
 };
+ 
+
+
+
+
 
   return (
     <div className="product-details-page">

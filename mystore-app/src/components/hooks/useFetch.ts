@@ -1,18 +1,19 @@
-import { useCallback, useEffect ,useState} from "react";
+import {  useEffect ,useState} from "react";
+import type{ DependencyList } from "react";
 
-const useFetch = <T>(fetchFunction: () => Promise<T>, deps: unknown[] = []) => {
+const useFetch = <T>(fetchFunction: () => Promise<T>, deps: DependencyList = []) => {
     
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const memoizedFetch=useCallback(fetchFunction, deps);
+    
     useEffect(() => {
         let isMounted = true; // To prevent state updates on unmounted component
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const result = await memoizedFetch();
+                const result = await fetchFunction();
                 if (isMounted) {
                     setData(result);
                     setError(null);
@@ -31,7 +32,7 @@ const useFetch = <T>(fetchFunction: () => Promise<T>, deps: unknown[] = []) => {
         return () => {
             isMounted = false;
         };
-    }, [memoizedFetch]);
+    },[...deps]);
 
 
     return { data, loading, error };

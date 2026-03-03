@@ -1,8 +1,26 @@
 import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
 import type { Cart } from "../../modals/Cart";
-import { getCartById,getCart, createCart, updateCart, deleteCart,createOrder } from "../../services/carts.service";
+import { getCartById, createCart, updateCart, deleteCart,createOrder } from "../../services/carts.service";
+import type { Customer } from "../../modals/Customer";
+import { uiActions } from "./uiSlice";
 
+const TAX_RATE = 0.1; 
+const calculateTotals = (items: Cart["items"]) => {
+  const subTotal = items.reduce(
+    (acc, item) => acc + item.price * item.qty,
+    0
+  );
 
+  const roundedSubTotal = Number(subTotal.toFixed(2));
+  const tax = Number((roundedSubTotal * TAX_RATE).toFixed(2));
+  const total = Number((roundedSubTotal + tax).toFixed(2));
+
+  return {
+    subTotal: roundedSubTotal,
+    tax,
+    total
+  };
+};
 
 export const syncCart = createAsyncThunk(
   "cart/syncCart",
@@ -12,8 +30,10 @@ export const syncCart = createAsyncThunk(
     const cart = state.cart;
     const cartId = localStorage.getItem("cartId");
 
+
     if (!cartId) {
       const newCart = await createCart(cart);
+      console.log("Cart created successfully on the first attempt of buying", { cart: newCart, cartId: newCart.id });
 
       localStorage.setItem("cartId", newCart.id);
 
@@ -30,7 +50,7 @@ export const fetchCart = createAsyncThunk(
   async () => {
 
  const cartId = localStorage.getItem("cartId");
-    // 🟢 Cart already exists
+ console.log("Fetching cart with ID:", cartId);
     if (cartId) {
       return await getCartById(cartId);
     }
@@ -43,10 +63,10 @@ export const fetchCart = createAsyncThunk(
 export const confirmOrder = createAsyncThunk(
   "cart/confirmOrder",
   async (
-    { customer, paymentMethod }: { customer: any; paymentMethod: string },
+    { customer, paymentMethod }: { customer: Customer; paymentMethod: string },
     { getState, dispatch }
   ) => {
-
+    try {
     const state = getState() as { cart: Cart };
     const cart = state.cart;
     const cartId = localStorage.getItem("cartId");
@@ -55,18 +75,32 @@ export const confirmOrder = createAsyncThunk(
       throw new Error("No cart to confirm");
     }
     await createOrder(cart, customer, paymentMethod);
+    console.log("Order created successfully", { cart, customer, paymentMethod });
     await deleteCart(cartId);
+  console.log("Cart deleted successfully", { cartId ,cart});
+    
 
     localStorage.removeItem("cartId");
     dispatch(cartActions.clearCart());
+    console.log(cart);
+    dispatch(uiActions.showNotification({ status: "success", title: "Order Placed", message: "Your order has been placed successfully!" }));
+    //console.log("Cart cleared successfully", { cartId });
 
     return true;
+    } catch (error) {
+      let message = "Failed to place order. Please try again.";
+      if (error instanceof Error) {
+        message= error.message;
+      }
+      dispatch(uiActions.showNotification({ status: "error", title: "Order Failed", message }));
+      throw error;
+    }
   }
 );
 
 
 const initialCartState: Cart = {
-    id: localStorage.getItem("cartId") || null,
+    id: localStorage.getItem("cartId") || "",
     total: 0,
     subTotal: 0,
     tax: 0,
@@ -93,18 +127,21 @@ const cartSlice = createSlice({
                     qty: quantity,
                 });
             }
-            state.subTotal = state.items.reduce((acc, item) => acc + item.price * item.qty, 0);
-            state.tax = state.subTotal * 0.1; // Assuming 10% tax
-            state.total = state.subTotal + state.tax;
+            const totals = calculateTotals(state.items);
+            state.subTotal = totals.subTotal;
+            state.tax = totals.tax;
+            state.total = totals.total;
+          
             
         },
         removeItemFromCart(state, action) {
             // logic to remove item from cart
             const itemId = action.payload;
             state.items = state.items.filter(item => item.id !== itemId);
-            state.subTotal = state.items.reduce((acc, item) => acc + item.price * item.qty, 0);
-            state.tax = state.subTotal * 0.1;
-            state.total = state.subTotal + state.tax;
+            const totals = calculateTotals(state.items);
+            state.subTotal = totals.subTotal;
+            state.tax = totals.tax;
+            state.total = totals.total;
 
         },
         updateItemQuantity(state, action) {
@@ -113,17 +150,15 @@ const cartSlice = createSlice({
             const existingItem = state.items.find(item => item.id === itemId);
             if (existingItem) {
                 existingItem.qty = quantity;
-                state.subTotal = state.items.reduce((acc, item) => acc + item.price * item.qty, 0);
-                state.tax = state.subTotal * 0.1;
-                state.total = state.subTotal + state.tax;
+                const totals = calculateTotals(state.items);
+                state.subTotal = totals.subTotal;
+                state.tax = totals.tax;
+                state.total = totals.total;
             }
         },
 
-        clearCart (state) {
-            state.items = [];
-            state.subTotal = 0;
-            state.tax = 0;
-            state.total = 0;
+        clearCart () {
+            return initialCartState;
         },
         
     },  
