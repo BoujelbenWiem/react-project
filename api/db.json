@@ -3721,16 +3721,16 @@
   "carts": [
     {
       "id": 1,
-      "total": 2933.7,
-      "subTotal": 2667,
-      "tax": 266.7,
+      "total": 4735.5,
+      "subTotal": 4305,
+      "tax": 430.5,
       "items": [
         {
           "id": 5007,
           "name": "sony xperia l1",
           "imageName": "sony-xperia-l1-.jpg",
           "price": 281,
-          "qty": 3
+          "qty": 5
         },
         {
           "id": 5014,
@@ -3738,6 +3738,20 @@
           "imageName": "sony-xperia-xa-ultra.jpg",
           "price": 608,
           "qty": 3
+        },
+        {
+          "id": 5005,
+          "name": "sony xperia 5",
+          "imageName": "sony-xperia-5-.jpg",
+          "price": 626,
+          "qty": 1
+        },
+        {
+          "id": 1038,
+          "name": "apple watch series 5",
+          "imageName": "apple-watch-series-5.jpg",
+          "price": 225,
+          "qty": 2
         }
       ]
     }

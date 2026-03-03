@@ -44,13 +44,13 @@ const Footer = () => {
             Subscribe to get updates on new products and special offers.
           </p>
 
-          <form className="footer__newsletter">
+          <div className="footer__newsletter">
             <input
               type="email"
               placeholder="Enter your email"
             />
-            <button type="submit">Sign Up</button>
-          </form>
+            <button >Sign Up</button>
+          </div>
         </div>
 
       </div>
