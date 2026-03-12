@@ -1,11 +1,11 @@
 import ProductCard from "./ProductCard";
 import "./ProductList.scss";
 import type { Product } from "../../modals/Product";
-import { useState ,useMemo,useCallback} from "react";
+import { useState ,useMemo} from "react";
 import Loader from "../ui/Loader";
 
 const ProductList: React.FC<{ products: Product[]; maxDisplay?: number; title: string; previewMode?: boolean; loading?: boolean }> = ({ products, maxDisplay = 3, title = "", previewMode = false, loading = false }) => {
-  console.log("RENDERING ProductList");
+  //console.log("RENDERING ProductList");
   const [showAll, setShowAll] = useState(false);
   const displayedProducts = useMemo(() => {
       if (!previewMode) return products;
@@ -13,9 +13,9 @@ const ProductList: React.FC<{ products: Product[]; maxDisplay?: number; title: s
       ? products
       : products.slice(0, maxDisplay);
     }, [showAll, products, maxDisplay, previewMode]);
-    const toggleView = useCallback(() => {
+    const toggleView = () => {
         setShowAll((prev) => !prev);
-    }, []);
+    }
     //console.log(products.length, maxDisplay);
     return (
         <section className="product-list">

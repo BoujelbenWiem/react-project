@@ -6,8 +6,9 @@ import { cartActions, syncCart } from "../../redux/slices/cartSlice";
 import { uiActions } from "../../redux/slices/uiSlice";
 
 
+
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
-  console.log("RENDERING ProductCard");
+  //console.log("RENDERING ProductCard");
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const handleAddToCart = (e: React.MouseEvent) => {

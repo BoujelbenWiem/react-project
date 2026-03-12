@@ -4,6 +4,7 @@ import { getCartById, createCart, updateCart, deleteCart,createOrder } from "../
 import type { Customer } from "../../modals/Customer";
 import { uiActions } from "./uiSlice";
 
+
 const TAX_RATE = 0.1; 
 const calculateTotals = (items: Cart["items"]) => {
   const subTotal = items.reduce(
@@ -12,6 +13,7 @@ const calculateTotals = (items: Cart["items"]) => {
   );
 
   const roundedSubTotal = Number(subTotal.toFixed(2));
+  
   const tax = Number((roundedSubTotal * TAX_RATE).toFixed(2));
   const total = Number((roundedSubTotal + tax).toFixed(2));
 
@@ -21,6 +23,7 @@ const calculateTotals = (items: Cart["items"]) => {
     total
   };
 };
+
 
 export const syncCart = createAsyncThunk(
   "cart/syncCart",
@@ -111,31 +114,31 @@ const cartSlice = createSlice({
     name: "cart",
     initialState: initialCartState,
     reducers: {
+      
+          
         addItemToCart(state, action) {
-            // logic to add item to cart
             const { product, quantity } = action.payload;
-            
+            console.log("discount rate", product.discountRate);
+            const discountedPrice = Number((product.price * (1 - (product.discountRate / 100))).toFixed(2));
+            console.log("discounted price", discountedPrice);
             const existingItem = state.items.find(item => item.id === product.id);
             if (existingItem) {
-                existingItem.qty += quantity;
+              existingItem.qty += quantity;
             } else {
-                state.items.push({
-                    id: product.id,
-                    name: product.name,
-                    imageName: product.imageName,
-                    price: product.price,
-                    qty: quantity,
-                });
+              state.items.push({
+                id: product.id,
+                name: product.name,
+                imageName: product.imageName,
+                price: discountedPrice,
+                qty: quantity,
+              });
             }
             const totals = calculateTotals(state.items);
             state.subTotal = totals.subTotal;
             state.tax = totals.tax;
             state.total = totals.total;
-          
-            
         },
         removeItemFromCart(state, action) {
-            // logic to remove item from cart
             const itemId = action.payload;
             state.items = state.items.filter(item => item.id !== itemId);
             const totals = calculateTotals(state.items);
@@ -145,7 +148,6 @@ const cartSlice = createSlice({
 
         },
         updateItemQuantity(state, action) {
-            // logic to update item quantity in cart
             const { itemId, quantity } = action.payload;
             const existingItem = state.items.find(item => item.id === itemId);
             if (existingItem) {
@@ -176,6 +178,8 @@ const cartSlice = createSlice({
     builder.addCase(confirmOrder.fulfilled, () => {
       return initialCartState;
     });
+
+    
 
   }
 

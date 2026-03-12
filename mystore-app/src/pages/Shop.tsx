@@ -11,7 +11,7 @@ import SearchBar from "../components/layout/SearchBar";
 
 
 const ShopPage = () => {
-    console.log("RENDERING ShopPage");
+    //console.log("RENDERING ShopPage");
     const limit = 8;
     const [searchParams,setSearchParams] = useSearchParams();
 

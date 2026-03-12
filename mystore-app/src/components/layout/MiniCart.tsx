@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
 const MiniCart = () => {
     const cart = useSelector((state: { cart: Cart }) => state.cart);
-    const cartItemCount = cart.items.reduce((total, item) => total + item.qty, 0);
+    const cartItemCount = cart.items.length;
     const navigate = useNavigate();
     const { data: cartData, loading, error } = useFetch<Cart>(() => Promise.resolve(cart), [cart]);
 

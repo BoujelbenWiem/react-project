@@ -10,7 +10,7 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const handleSearch=()=>{
-      const params = new URLSearchParams(location.search);
+      const params = new URLSearchParams(location.search); //URLSearchParams to manage query parameters useSearchParams is not working in this case because we need to manipulate the query parameters before navigating to the shop page
       if (params.get("categoryId")) {
         params.delete("categoryId"); // Clear category filter when searching
       }

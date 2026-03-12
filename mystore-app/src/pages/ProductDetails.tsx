@@ -2,7 +2,7 @@ import ProductDetails from "../components/product/ProductDetails";
 
 
 const ProductDetailsPage = () => {
-    console.log("Rendering ProductDetailsPage");
+    //console.log("Rendering ProductDetailsPage");
   
        
 

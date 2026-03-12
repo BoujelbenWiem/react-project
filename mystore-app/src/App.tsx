@@ -7,7 +7,7 @@ function App() {
   const dispatch = useAppDispatch();
   useEffect(() => {
   dispatch(fetchCart());
-}, []);
+}, [dispatch]);
   return (
     <>
       <AppRouter />

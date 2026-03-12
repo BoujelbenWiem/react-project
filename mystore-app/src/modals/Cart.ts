@@ -12,5 +12,6 @@ export type Cart = {
     subTotal: number;
     tax: number;
     items: CartItem[];
+   
     
 }

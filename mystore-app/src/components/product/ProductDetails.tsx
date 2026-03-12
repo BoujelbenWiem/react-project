@@ -43,7 +43,7 @@ const ProductDetails = () => {
       recentlyViewed = [];
     }
   }
-  recentlyViewed=[productId, ...recentlyViewed.filter(id => id !== productId)];
+  recentlyViewed=[productId, ...recentlyViewed.filter(id => id !== productId)]; // pour éviter les doublons et garder l'ordre on elimine l'id s'il existe déjà et je le rajoute au début
   recentlyViewed = recentlyViewed.slice(0, 10);
   Cookies.set(cookieKey, JSON.stringify(recentlyViewed), { expires: 7 });
 }
